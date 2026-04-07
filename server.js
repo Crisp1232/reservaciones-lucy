@@ -12,64 +12,61 @@ app.use(express.static('public'));
 
 let reservaciones = [];
 
-// Crear reservación (ahora nace con estado "pendiente")
 app.post('/api/reservaciones', (req, res) => {
     const nueva = { ...req.body, id: Date.now(), estado: 'pendiente' };
     reservaciones.push(nueva);
-    res.status(201).json({ mensaje: 'Reservación guardada', reservacion: nueva });
+    res.status(201).json({ mensaje: 'Reservación guardada con éxito', reservacion: nueva });
 });
 
-// Obtener todas las reservaciones
 app.get('/api/reservaciones', (req, res) => {
     res.json(reservaciones);
 });
 
-// NUEVA RUTA: Marcar como completada (servida)
 app.put('/api/reservaciones/:id/completar', (req, res) => {
     const id = parseInt(req.params.id);
     const reserva = reservaciones.find(r => r.id === id);
     if (reserva) {
         reserva.estado = 'completada';
-        res.json({ mensaje: 'Mesa servida y archivada' });
+        res.json({ mensaje: 'Mesa servida' });
     } else {
-        res.status(404).json({ error: 'Reserva no encontrada' });
+        res.status(404).json({ error: 'No encontrada' });
     }
 });
 
-// Generar PDF (imprime TODAS, tanto las pendientes como las servidas)
+// GENERAR PDF ORDENADO POR FECHA Y HORA
 app.get('/api/exportar-pdf', (req, res) => {
     const doc = new PDFDocument({ margin: 50 });
-
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=Reporte_Reservaciones.pdf');
-
+    res.setHeader('Content-Disposition', 'attachment; filename=Reporte_Reservas_Lucy.pdf');
     doc.pipe(res);
 
-    doc.fontSize(20).text('REPORTE DE RESERVACIONES - LUCY', { align: 'center' });
+    doc.fontSize(22).text('GRILL & BAKERY LUCY', { align: 'center' });
+    doc.fontSize(16).text('Cronograma de Reservaciones', { align: 'center' });
     doc.moveDown();
-    doc.fontSize(12).text(`Generado el: ${new Date().toLocaleString()}`, { align: 'right' });
-    doc.moveDown();
-    doc.path('M 50 120 L 550 120').stroke();
-    doc.moveDown();
+    
+    // Lógica de ordenamiento: Primero por fecha, luego por hora
+    const reservacionesOrdenadas = [...reservaciones].sort((a, b) => {
+        if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha);
+        return a.hora.localeCompare(b.hora);
+    });
 
-    if (reservaciones.length === 0) {
-        doc.text('No hay reservaciones registradas.');
+    if (reservacionesOrdenadas.length === 0) {
+        doc.text('No hay reservaciones.');
     } else {
-        reservaciones.forEach((r, i) => {
-            const estadoTexto = r.estado === 'completada' ? '✅ Servida' : '⏳ Pendiente';
-            doc.fillColor('#007bff').fontSize(14).text(`${i + 1}. Cliente: ${r.nombre} [${estadoTexto}]`);
-            doc.fillColor('black').fontSize(12)
-               .text(`   Fecha: ${r.fecha} | Hora: ${r.hora}`)
-               .text(`   Personas: ${r.personas}`)
-               .text(`   Pedido: ${r.pedido}`)
-               .text(`   Nota adicional: ${r.nota || 'Sin notas'}`)
-               .moveDown(0.5);
-            doc.path(`M 50 ${doc.y} L 300 ${doc.y}`).dash(5, { space: 10 }).stroke().undash();
-            doc.moveDown(0.8);
+        reservacionesOrdenadas.forEach((r, i) => {
+            const status = r.estado === 'completada' ? '[SERVIDA]' : '[PENDIENTE]';
+            doc.fillColor(r.estado === 'completada' ? 'green' : 'red')
+               .fontSize(12).text(`${r.fecha} | ${r.hora} - ${r.nombre} ${status}`);
+            
+            doc.fillColor('black').fontSize(11)
+               .text(`   Personas: ${r.personas} | Pedido: ${r.pedido}`)
+               .text(`   Notas: ${r.nota || 'Ninguna'}`)
+               .moveDown(0.8);
+            doc.path(`M 50 ${doc.y} L 550 ${doc.y}`).strokeOpacity(0.2).stroke().strokeOpacity(1);
+            doc.moveDown(0.5);
         });
     }
-
     doc.end();
 });
 
-app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));

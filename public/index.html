@@ -5,167 +5,192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservaciones - Grill & Bakery Lucy</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; }
-        form { display: flex; flex-direction: column; gap: 10px; }
-        input, select, textarea, button { padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit; }
-        
-        .btn-reservar { background-color: #007bff; color: white; border: none; cursor: pointer; margin-top: 10px; font-weight: bold;}
-        .btn-reservar:hover { background-color: #0056b3; }
-        
-        .btn-pdf { background-color: #e74c3c; color: white; border: none; cursor: pointer; margin-top: 10px; font-weight: bold; }
-        .btn-pdf:hover { background-color: #c0392b; }
-
-        /* Estilo para el nuevo botón de Servida */
-        .btn-servida { background-color: #28a745; color: white; border: none; padding: 8px; font-size: 14px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 100%;}
-        .btn-servida:hover { background-color: #218838; }
-
-        #mensaje { margin-top: 15px; text-align: center; font-weight: bold; color: green; }
-        .lista-reservas { margin-top: 30px; }
-        .reserva-item { background: #e9ecef; padding: 15px; margin-bottom: 10px; border-radius: 5px; border-left: 5px solid #007bff; position: relative;}
-        .nota-texto { font-style: italic; color: #555; margin-top: 5px; font-size: 14px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1b2a; color: #e0e1dd; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #1b263b; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { text-align: center; color: #e9c46a; margin-bottom: 5px; }
+        h2 { text-align: center; font-size: 1.1em; color: #a2a2a2; margin-top: 0; margin-bottom: 25px; }
+        form { display: flex; flex-direction: column; gap: 12px; }
+        label { font-weight: bold; font-size: 0.9em; color: #e9c46a; }
+        input, select, textarea, button { padding: 12px; border-radius: 8px; border: none; font-size: 16px; }
+        input, select, textarea { background: #415a77; color: white; }
+        .btn-reservar { background: #e9c46a; color: #1b263b; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-reservar:hover { background: #f4a261; }
+        .btn-pdf { background: #e74c3c; color: white; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; }
+        .btn-servida { background: #2a9d8f; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .reserva-item { background: #415a77; padding: 20px; margin-top: 15px; border-radius: 10px; border-left: 8px solid #e9c46a; }
+        .nota-texto { color: #bdc3c7; font-size: 0.85em; margin-top: 8px; border-top: 1px solid #5d6d7e; padding-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Grill & Bakery Lucy</h1>
-    <h2 style="text-align: center; font-size: 18px; color: #666; margin-top: -10px;">Sistema de Reservaciones</h2>
+    <h1>GRILL & BAKERY LUCY</h1>
+    <h2>Gestión de Reservas y Pedidos</h2>
     
     <form id="reservaForm">
-        <label for="nombre">Nombre completo:</label>
-        <input type="text" id="nombre" required placeholder="Ej. Juan Pérez">
+        <label>Nombre del Cliente:</label>
+        <input type="text" id="nombre" required placeholder="Nombre completo">
         
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" required>
-        
-        <label for="hora">Hora:</label>
-        <input type="time" id="hora" required>
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Fecha:</label>
+                <input type="date" id="fecha" required style="width: 90%;">
+            </div>
+            <div style="flex: 1;">
+                <label>Hora:</label>
+                <input type="time" id="hora" required style="width: 90%;">
+            </div>
+        </div>
 
-        <label for="personas">Número de personas:</label>
-        <input type="number" id="personas" required min="1" placeholder="Ej. 2">
+        <label>Número de Comensales:</label>
+        <input type="number" id="personas" required min="1" placeholder="Ej: 4">
 
-        <label for="pedido">¿Deseas pre-ordenar tu comida?</label>
+        <label>Seleccionar Menú (Pre-orden):</label>
         <select id="pedido" required>
-            <option value="Platos a escoger cuando llegue" selected>🍽️ Platos a escoger cuando llegue (Decidir allá)</option>
+            <option value="Platos a escoger cuando llegue">🍽️ Decidir en el restaurante</option>
             
-            <optgroup label="Especialidades">
+            <optgroup label="Especialidades de la Casa">
                 <option value="Chuzo Tradicional Lucy">Chuzo Tradicional Lucy</option>
                 <option value="Chuzo Mar y Tierra">Chuzo Mar y Tierra</option>
                 <option value="Chuzo de Mariscos">Chuzo de Mariscos</option>
+                <option value="Chuzo de Cuy de la Abuela">Chuzo de Cuy de la Abuela</option>
             </optgroup>
 
             <optgroup label="De la Parrilla a la Mesa">
                 <option value="plato de tomahawk">plato de tomahawk</option>
-                <option value="Suprema de Pollo">Suprema de Pollo</option>
-                <option value="Costilla de Cerdo">Costilla de Cerdo</option>
-                <option value="Lomo a lo Pobre">Lomo a lo Pobre</option>
                 <option value="Bife de Chorizo Lucy">Bife de Chorizo Lucy</option>
                 <option value="Ribeye Steak">Ribeye Steak</option>
+                <option value="Cowboy de Cerdo">Cowboy de Cerdo</option>
+                <option value="Matambre de Cerdo">Matambre de Cerdo</option>
+                <option value="Lucy Steak">Lucy Steak</option>
+                <option value="Lomo a lo Pobre">Lomo a lo Pobre</option>
+                <option value="Churrasco">Churrasco</option>
+                <option value="Lomo Saltado">Lomo Saltado</option>
+                <option value="Suprema de Pollo">Suprema de Pollo</option>
+                <option value="Costilla de Cerdo">Costilla de Cerdo</option>
+                <option value="Cuencano Tradicional Lucy">Cuencano Tradicional Lucy</option>
             </optgroup>
 
-            <optgroup label="Del Mar a la Mesa">
-                <option value="Camarones Especiales Lucy">Camarones Especiales Lucy</option>
-                <option value="Pescado Especial Lucy">Pescado Especial Lucy</option>
-                <option value="Arroz Marinero">Arroz Marinero</option>
+            <optgroup label="Sopas y Caldos">
+                <option value="Locro de Papas">Locro de Papas</option>
+                <option value="Caldo de Gallina Criolla">Caldo de Gallina Criolla</option>
+                <option value="Caldo Tradicional de Patas">Caldo Tradicional de Patas</option>
+                <option value="Salchipapa">Salchipapa</option>
+                <option value="Papi Pollo">Papi Pollo</option>
             </optgroup>
 
-            <optgroup label="Hamburguesas">
+            <optgroup label="Ceviches y Chicharrones">
+                <option value="Ceviche de Pescado">Ceviche de Pescado</option>
+                <option value="Ceviche de Camarón">Ceviche de Camarón</option>
+                <option value="Ceviche Marinero">Ceviche Marinero</option>
+                <option value="Ceviche Mixto">Ceviche Mixto</option>
+                <option value="Jalea de Mariscos">Jalea de Mariscos</option>
+            </optgroup>
+
+            <optgroup label="Tex Mex">
+                <option value="Tacos Lucy">Tacos Lucy</option>
+                <option value="Burrito Lucy">Burrito Lucy</option>
+                <option value="Quesadilla Lucy">Quesadilla Lucy</option>
+                <option value="Nachos con Chilli Lucy">Nachos con Chilli Lucy</option>
+            </optgroup>
+
+            <optgroup label="Hamburguesas y Alitas">
                 <option value="Hamburguesa Lucy">Hamburguesa Lucy</option>
-                <option value="Hamburguesa Clásica">Hamburguesa Clásica</option>
                 <option value="Hamburguesa BBQ Texas">Hamburguesa BBQ Texas</option>
+                <option value="Hamburguesa Funghi">Hamburguesa Funghi</option>
+                <option value="Hamburguesa Hawaiana">Hamburguesa Hawaiana</option>
+                <option value="Alitas 5 und">Alitas de Pollo (5 Unidades)</option>
+                <option value="Alitas 10 und">Alitas de Pollo (10 Unidades)</option>
+            </optgroup>
+
+            <optgroup label="Postres">
+                <option value="Torta Mojada de Chocolate">Torta Mojada de Chocolate</option>
+                <option value="Torta Tres Leches">Torta Tres Leches</option>
+                <option value="Banana Split Lucy">Banana Split Lucy</option>
+            </optgroup>
+
+            <optgroup label="Bebidas y Cerveza">
+                <option value="Cerveza Blonde Ale">Cerveza Blonde Ale</option>
+                <option value="Cerveza Irish Red Ale">Cerveza Irish Red Ale</option>
+                <option value="Cerveza Sweet Stout">Cerveza Sweet Stout</option>
+                <option value="Cerveza Honey Ale">Cerveza Honey Ale</option>
+                <option value="Canelazo Tradicional">Canelazo Tradicional</option>
+                <option value="Sangría Jarra">Sangría (Jarra)</option>
+                <option value="Limonada Hierba Buena">Limonada Hierba Buena</option>
             </optgroup>
         </select>
 
-        <label for="nota">Nota Adicional (Alergias, sorpresas, etc.):</label>
-        <textarea id="nota" rows="2" placeholder="Opcional..."></textarea>
+        <label>Notas Especiales:</label>
+        <textarea id="nota" rows="2" placeholder="Alergias, cumpleañero, etc."></textarea>
         
-        <button type="submit" class="btn-reservar">Confirmar Reservación</button>
+        <button type="submit" class="btn-reservar">REGISTRAR RESERVACIÓN</button>
     </form>
 
-    <button id="btnExportar" class="btn-pdf">📥 Descargar Reporte PDF</button>
-
+    <button id="btnExportar" class="btn-pdf">📥 DESCARGAR HOJA DE RUTA (PDF)</button>
     <div id="mensaje"></div>
 
     <div class="lista-reservas">
-        <h3>Reservaciones Pendientes:</h3>
-        <div id="listaContainer">No hay mesas pendientes.</div>
+        <h3 style="color: #e9c46a;">Próximas Mesas por Servir:</h3>
+        <div id="listaContainer">Cargando...</div>
     </div>
 </div>
 
 <script>
     const API_URL = '/api/reservaciones';
-    const PDF_URL = '/api/exportar-pdf'; 
+    const PDF_URL = '/api/exportar-pdf';
 
     async function cargarReservaciones() {
-        const respuesta = await fetch(API_URL);
-        const reservaciones = await respuesta.json();
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const pendientes = data.filter(r => r.estado !== 'completada')
+                               .sort((a,b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
         
-        // Filtramos para mostrar SOLO las que NO están completadas
-        const pendientes = reservaciones.filter(res => res.estado !== 'completada');
+        const cont = document.getElementById('listaContainer');
+        cont.innerHTML = pendientes.length ? '' : 'No hay mesas pendientes.';
         
-        const contenedor = document.getElementById('listaContainer');
-        if (pendientes.length === 0) {
-            contenedor.innerHTML = 'No hay mesas pendientes en este momento.';
-            return;
-        }
-
-        contenedor.innerHTML = '';
-        pendientes.forEach(res => {
+        pendientes.forEach(r => {
             const div = document.createElement('div');
             div.className = 'reserva-item';
             div.innerHTML = `
-                <strong>${res.nombre}</strong> - ${res.fecha} a las ${res.hora} <br>
-                👤 Personas: ${res.personas} <br>
-                🍲 Pedido: <strong>${res.pedido}</strong> <br>
-                <div class="nota-texto">📝 Notas: ${res.nota || 'Ninguna'}</div>
-                <button onclick="marcarServida(${res.id})" class="btn-servida">✅ Marcar como Servida</button>
+                <div style="font-size: 1.1em;"><strong>${r.fecha} a las ${r.hora}</strong></div>
+                <div style="margin: 5px 0;">👤 ${r.nombre} (${r.personas} pers.)</div>
+                <div style="color: #e9c46a;">🍲 ${r.pedido}</div>
+                <div class="nota-texto">Nota: ${r.nota || 'Sin observaciones'}</div>
+                <button onclick="marcarServida(${r.id})" class="btn-servida">MARCAR COMO SERVIDA ✅</button>
             `;
-            contenedor.appendChild(div);
+            cont.appendChild(div);
         });
     }
 
-    // Nueva función para el botón verde
-    window.marcarServida = async function(id) {
-        if(confirm('¿Confirmas que esta mesa ya fue servida? Desaparecerá de esta lista.')) {
+    window.marcarServida = async (id) => {
+        if(confirm('¿Confirmas que la mesa ya fue atendida?')) {
             await fetch(`${API_URL}/${id}/completar`, { method: 'PUT' });
-            cargarReservaciones(); // Recargamos la lista para que desaparezca
+            cargarReservaciones();
         }
     };
 
     document.getElementById('reservaForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        const nombre = document.getElementById('nombre').value;
-        const fecha = document.getElementById('fecha').value;
-        const hora = document.getElementById('hora').value;
-        const personas = document.getElementById('personas').value;
-        const pedido = document.getElementById('pedido').value;
-        const nota = document.getElementById('nota').value;
-
-        const respuesta = await fetch(API_URL, {
+        const body = {
+            nombre: document.getElementById('nombre').value,
+            fecha: document.getElementById('fecha').value,
+            hora: document.getElementById('hora').value,
+            personas: document.getElementById('personas').value,
+            pedido: document.getElementById('pedido').value,
+            nota: document.getElementById('nota').value
+        };
+        await fetch(API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre, fecha, hora, personas, pedido, nota })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
         });
-
-        const resultado = await respuesta.json();
-        
-        document.getElementById('mensaje').innerText = resultado.mensaje;
         document.getElementById('reservaForm').reset();
         document.getElementById('pedido').value = "Platos a escoger cuando llegue";
         cargarReservaciones();
-        
-        setTimeout(() => { document.getElementById('mensaje').innerText = ''; }, 4000);
     });
 
-    document.getElementById('btnExportar').addEventListener('click', () => {
-        window.open(PDF_URL, '_blank');
-    });
-
+    document.getElementById('btnExportar').addEventListener('click', () => window.open(PDF_URL, '_blank'));
     cargarReservaciones();
 </script>
-
 </body>
 </html>
