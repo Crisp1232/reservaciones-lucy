@@ -12,10 +12,11 @@ app.use(express.static('public'));
 
 let reservaciones = [];
 
+// Rutas de la API
 app.post('/api/reservaciones', (req, res) => {
     const nueva = { ...req.body, id: Date.now(), estado: 'pendiente' };
     reservaciones.push(nueva);
-    res.status(201).json({ mensaje: 'Reservación guardada', reservacion: nueva });
+    res.status(201).json({ mensaje: '¡Reservación exitosa!', reservacion: nueva });
 });
 
 app.get('/api/reservaciones', (req, res) => {
@@ -24,49 +25,54 @@ app.get('/api/reservaciones', (req, res) => {
 
 app.put('/api/reservaciones/:id/completar', (req, res) => {
     const id = parseInt(req.params.id);
-    const reserva = reservaciones.find(r => r.id === id);
-    if (reserva) {
-        reserva.estado = 'completada';
-        res.json({ mensaje: 'Mesa servida' });
+    const index = reservaciones.findIndex(r => r.id === id);
+    if (index !== -1) {
+        reservaciones[index].estado = 'completada';
+        res.json({ mensaje: 'Mesa servida con éxito' });
     } else {
-        res.status(404).json({ error: 'No encontrada' });
+        res.status(404).json({ error: 'No se encontró la reserva' });
     }
 });
 
+// PDF Profesional: Organizado por día y hora (Solo pendientes)
 app.get('/api/exportar-pdf', (req, res) => {
-    const doc = new PDFDocument({ margin: 50 });
+    const doc = new PDFDocument({ margin: 50, size: 'A4' });
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=Pendientes_Lucy.pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=Logistica_Lucy.pdf');
     doc.pipe(res);
 
-    doc.fontSize(22).text('GRILL & BAKERY LUCY', { align: 'center' });
-    doc.fontSize(14).text('HOJA DE TRABAJO: MESAS PENDIENTES', { align: 'center' });
+    // Encabezado
+    doc.fillColor('#1b263b').fontSize(26).text('GRILL & BAKERY LUCY', { align: 'center', b: true });
+    doc.fontSize(12).fillColor('#666').text('Hoja de Ruta de Cocina y Servicio', { align: 'center' });
     doc.moveDown();
-    
-    // Filtro estricto: Solo pendientes y ordenado por Fecha -> Hora
+    doc.path('M 50 110 L 550 110').lineWidth(2).stroke('#e9c46a');
+    doc.moveDown(2);
+
     const pendientes = reservaciones.filter(r => r.estado === 'pendiente')
         .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
 
     if (pendientes.length === 0) {
-        doc.text('No hay reservaciones pendientes.');
+        doc.fillColor('black').fontSize(16).text('No hay pedidos pendientes para hoy.', { align: 'center' });
     } else {
         let fechaActual = "";
         pendientes.forEach((r) => {
             if (r.fecha !== fechaActual) {
                 fechaActual = r.fecha;
                 doc.moveDown();
-                doc.fillColor('black').fontSize(14).text(`DÍA: ${fechaActual}`, { underline: true });
+                doc.rect(50, doc.y, 500, 25).fill('#f1f1f1');
+                doc.fillColor('#1b263b').fontSize(14).text(`FECHA: ${fechaActual}`, 60, doc.y - 18, { b: true });
                 doc.moveDown(0.5);
             }
-            doc.fillColor('#333').fontSize(11)
-               .text(`Hora: ${r.hora} | Cliente: ${r.nombre} | Pers: ${r.personas}`)
-               .fillColor('blue').text(`Pedido: ${r.pedido}`)
-               .fillColor('black').text(`Notas: ${r.nota || 'Sin notas'}`)
-               .moveDown(0.8);
-            doc.path(`M 50 ${doc.y} L 550 ${doc.y}`).strokeOpacity(0.1).stroke().strokeOpacity(1);
+            
+            doc.fillColor('black').fontSize(12).text(`${r.hora} - Cliente: ${r.nombre} (${r.personas} pers.)`, { b: true });
+            doc.fillColor('#e67e22').fontSize(11).text(`ORDEN: ${r.pedido}`);
+            if(r.nota) doc.fillColor('#7f8c8d').fontSize(10).text(`NOTA: ${r.nota}`);
+            doc.moveDown(0.5);
+            doc.path(`M 50 ${doc.y} L 550 ${doc.y}`).lineWidth(0.5).stroke('#ccc');
+            doc.moveDown(0.5);
         });
     }
     doc.end();
 });
 
-app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Lucy Server activo en puerto ${PORT}`));
