@@ -5,16 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservaciones - Grill & Bakery Lucy</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1b2a; color: #e0e1dd; padding: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0d1b2a; color: #e0e1dd; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; background: #1b263b; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         h1 { text-align: center; color: #e9c46a; margin-bottom: 5px; }
-        h2 { text-align: center; font-size: 1.1em; color: #a2a2a2; margin-top: 0; margin-bottom: 25px; }
+        h2 { text-align: center; font-size: 1.1em; color: #a2a2a2; margin-bottom: 25px; }
         form { display: flex; flex-direction: column; gap: 12px; }
         label { font-weight: bold; font-size: 0.9em; color: #e9c46a; }
-        input, select, textarea, button { padding: 12px; border-radius: 8px; border: none; font-size: 16px; }
-        input, select, textarea { background: #415a77; color: white; }
-        .btn-reservar { background: #e9c46a; color: #1b263b; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-reservar:hover { background: #f4a261; }
+        input, textarea, button { padding: 12px; border-radius: 8px; border: none; font-size: 16px; width: 100%; box-sizing: border-box; }
+        input, textarea { background: #415a77; color: white; }
+        
+        /* Contenedor de Selección Múltiple */
+        .menu-scroll { 
+            background: #415a77; 
+            border-radius: 8px; 
+            max-height: 300px; 
+            overflow-y: auto; 
+            padding: 15px;
+            border: 1px solid #e9c46a;
+        }
+        .categoria-titulo { color: #e9c46a; font-weight: bold; font-size: 0.85em; text-transform: uppercase; margin: 15px 0 5px 0; display: block; border-bottom: 1px solid #5d6d7e; }
+        .opcion-menu { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; }
+        .opcion-menu input { width: auto; cursor: pointer; }
+
+        .btn-reservar { background: #e9c46a; color: #1b263b; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-pdf { background: #e74c3c; color: white; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; }
         .btn-servida { background: #2a9d8f; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
         .reserva-item { background: #415a77; padding: 20px; margin-top: 15px; border-radius: 10px; border-left: 8px solid #e9c46a; }
@@ -25,103 +38,68 @@
 
 <div class="container">
     <h1>GRILL & BAKERY LUCY</h1>
-    <h2>Gestión de Reservas y Pedidos</h2>
+    <h2>Gestión Profesional de Reservas</h2>
     
     <form id="reservaForm">
         <label>Nombre del Cliente:</label>
-        <input type="text" id="nombre" required placeholder="Nombre completo">
+        <input type="text" id="nombre" required placeholder="Ej: Christopher Picón">
         
         <div style="display: flex; gap: 10px;">
-            <div style="flex: 1;">
-                <label>Fecha:</label>
-                <input type="date" id="fecha" required style="width: 90%;">
-            </div>
-            <div style="flex: 1;">
-                <label>Hora:</label>
-                <input type="time" id="hora" required style="width: 90%;">
-            </div>
+            <div style="flex: 1;"><label>Fecha:</label><input type="date" id="fecha" required></div>
+            <div style="flex: 1;"><label>Hora:</label><input type="time" id="hora" required></div>
         </div>
 
-        <label>Número de Comensales:</label>
-        <input type="number" id="personas" required min="1" placeholder="Ej: 4">
+        <label>Personas:</label>
+        <input type="number" id="personas" required min="1">
 
-        <label>Seleccionar Menú (Pre-orden):</label>
-        <select id="pedido" required>
-            <option value="Platos a escoger cuando llegue">🍽️ Decidir en el restaurante</option>
-            
-            <optgroup label="Especialidades de la Casa">
-                <option value="Chuzo Tradicional Lucy">Chuzo Tradicional Lucy</option>
-                <option value="Chuzo Mar y Tierra">Chuzo Mar y Tierra</option>
-                <option value="Chuzo de Mariscos">Chuzo de Mariscos</option>
-                <option value="Chuzo de Cuy de la Abuela">Chuzo de Cuy de la Abuela</option>
-            </optgroup>
+        <label>Selecciona los platos de la carta:</label>
+        <div class="menu-scroll" id="listaPlatos">
+            <label class="opcion-menu"><input type="checkbox" value="Platos a escoger cuando llegue" checked> 🍽️ Platos a escoger cuando llegue</label>
 
-            <optgroup label="De la Parrilla a la Mesa">
-                <option value="plato de tomahawk">plato de tomahawk</option>
-                <option value="Bife de Chorizo Lucy">Bife de Chorizo Lucy</option>
-                <option value="Ribeye Steak">Ribeye Steak</option>
-                <option value="Cowboy de Cerdo">Cowboy de Cerdo</option>
-                <option value="Matambre de Cerdo">Matambre de Cerdo</option>
-                <option value="Lucy Steak">Lucy Steak</option>
-                <option value="Lomo a lo Pobre">Lomo a lo Pobre</option>
-                <option value="Churrasco">Churrasco</option>
-                <option value="Lomo Saltado">Lomo Saltado</option>
-                <option value="Suprema de Pollo">Suprema de Pollo</option>
-                <option value="Costilla de Cerdo">Costilla de Cerdo</option>
-                <option value="Cuencano Tradicional Lucy">Cuencano Tradicional Lucy</option>
-            </optgroup>
+            <span class="categoria-titulo">Especialidades</span>
+            <label class="opcion-menu"><input type="checkbox" value="Chuzo Tradicional Lucy"> Chuzo Tradicional Lucy</label>
+            <label class="opcion-menu"><input type="checkbox" value="Chuzo Mar y Tierra"> Chuzo Mar y Tierra</label>
+            <label class="opcion-menu"><input type="checkbox" value="Chuzo de Mariscos"> Chuzo de Mariscos</label>
+            <label class="opcion-menu"><input type="checkbox" value="Chuzo de Cuy de la Abuela"> Chuzo de Cuy de la Abuela</label>
 
-            <optgroup label="Sopas y Caldos">
-                <option value="Locro de Papas">Locro de Papas</option>
-                <option value="Caldo de Gallina Criolla">Caldo de Gallina Criolla</option>
-                <option value="Caldo Tradicional de Patas">Caldo Tradicional de Patas</option>
-                <option value="Salchipapa">Salchipapa</option>
-                <option value="Papi Pollo">Papi Pollo</option>
-            </optgroup>
+            <span class="categoria-titulo">Parrilla</span>
+            <label class="opcion-menu"><input type="checkbox" value="plato de tomahawk"> plato de tomahawk</label>
+            <label class="opcion-menu"><input type="checkbox" value="Bife de Chorizo Lucy"> Bife de Chorizo Lucy</label>
+            <label class="opcion-menu"><input type="checkbox" value="Ribeye Steak"> Ribeye Steak</label>
+            <label class="opcion-menu"><input type="checkbox" value="Cowboy de Cerdo"> Cowboy de Cerdo</label>
+            <label class="opcion-menu"><input type="checkbox" value="Matambre de Cerdo"> Matambre de Cerdo</label>
+            <label class="opcion-menu"><input type="checkbox" value="Churrasco"> Churrasco</label>
+            <label class="opcion-menu"><input type="checkbox" value="Suprema de Pollo"> Suprema de Pollo</label>
+            <label class="opcion-menu"><input type="checkbox" value="Costilla de Cerdo"> Costilla de Cerdo</label>
 
-            <optgroup label="Ceviches y Chicharrones">
-                <option value="Ceviche de Pescado">Ceviche de Pescado</option>
-                <option value="Ceviche de Camarón">Ceviche de Camarón</option>
-                <option value="Ceviche Marinero">Ceviche Marinero</option>
-                <option value="Ceviche Mixto">Ceviche Mixto</option>
-                <option value="Jalea de Mariscos">Jalea de Mariscos</option>
-            </optgroup>
+            <span class="categoria-titulo">Sopas y Caldos</span>
+            <label class="opcion-menu"><input type="checkbox" value="Locro de Papas"> Locro de Papas</label>
+            <label class="opcion-menu"><input type="checkbox" value="Caldo de Gallina Criolla"> Caldo de Gallina Criolla</label>
+            <label class="opcion-menu"><input type="checkbox" value="Caldo Tradicional de Patas"> Caldo Tradicional de Patas</label>
+            <label class="opcion-menu"><input type="checkbox" value="Papi Pollo"> Papi Pollo</label>
+            <label class="opcion-menu"><input type="checkbox" value="Salchipapa"> Salchipapa</label>
 
-            <optgroup label="Tex Mex">
-                <option value="Tacos Lucy">Tacos Lucy</option>
-                <option value="Burrito Lucy">Burrito Lucy</option>
-                <option value="Quesadilla Lucy">Quesadilla Lucy</option>
-                <option value="Nachos con Chilli Lucy">Nachos con Chilli Lucy</option>
-            </optgroup>
+            <span class="categoria-titulo">Ceviches y Chicharrones</span>
+            <label class="opcion-menu"><input type="checkbox" value="Ceviche de Pescado"> Ceviche de Pescado</label>
+            <label class="opcion-menu"><input type="checkbox" value="Ceviche de Camarón"> Ceviche de Camarón</label>
+            <label class="opcion-menu"><input type="checkbox" value="Jalea de Mariscos"> Jalea de Mariscos</label>
 
-            <optgroup label="Hamburguesas y Alitas">
-                <option value="Hamburguesa Lucy">Hamburguesa Lucy</option>
-                <option value="Hamburguesa BBQ Texas">Hamburguesa BBQ Texas</option>
-                <option value="Hamburguesa Funghi">Hamburguesa Funghi</option>
-                <option value="Hamburguesa Hawaiana">Hamburguesa Hawaiana</option>
-                <option value="Alitas 5 und">Alitas de Pollo (5 Unidades)</option>
-                <option value="Alitas 10 und">Alitas de Pollo (10 Unidades)</option>
-            </optgroup>
+            <span class="categoria-titulo">Tex Mex e Hamburguesas</span>
+            <label class="opcion-menu"><input type="checkbox" value="Tacos Lucy"> Tacos Lucy</label>
+            <label class="opcion-menu"><input type="checkbox" value="Burrito Lucy"> Burrito Lucy</label>
+            <label class="opcion-menu"><input type="checkbox" value="Hamburguesa Lucy"> Hamburguesa Lucy</label>
+            <label class="opcion-menu"><input type="checkbox" value="Hamburguesa BBQ Texas"> Hamburguesa BBQ Texas</label>
+            <label class="opcion-menu"><input type="checkbox" value="Alitas de Pollo"> Alitas de Pollo</label>
 
-            <optgroup label="Postres">
-                <option value="Torta Mojada de Chocolate">Torta Mojada de Chocolate</option>
-                <option value="Torta Tres Leches">Torta Tres Leches</option>
-                <option value="Banana Split Lucy">Banana Split Lucy</option>
-            </optgroup>
-
-            <optgroup label="Bebidas y Cerveza">
-                <option value="Cerveza Blonde Ale">Cerveza Blonde Ale</option>
-                <option value="Cerveza Irish Red Ale">Cerveza Irish Red Ale</option>
-                <option value="Cerveza Sweet Stout">Cerveza Sweet Stout</option>
-                <option value="Cerveza Honey Ale">Cerveza Honey Ale</option>
-                <option value="Canelazo Tradicional">Canelazo Tradicional</option>
-                <option value="Sangría Jarra">Sangría (Jarra)</option>
-                <option value="Limonada Hierba Buena">Limonada Hierba Buena</option>
-            </optgroup>
-        </select>
+            <span class="categoria-titulo">Bebidas y Postres</span>
+            <label class="opcion-menu"><input type="checkbox" value="Cerveza Artesanal"> Cerveza Artesanal</label>
+            <label class="opcion-menu"><input type="checkbox" value="Sangría Jarra"> Sangría Jarra</label>
+            <label class="opcion-menu"><input type="checkbox" value="Torta Mojada de Chocolate"> Torta Mojada de Chocolate</label>
+            <label class="opcion-menu"><input type="checkbox" value="Banana Split Lucy"> Banana Split Lucy</label>
+        </div>
 
         <label>Notas Especiales:</label>
-        <textarea id="nota" rows="2" placeholder="Alergias, cumpleañero, etc."></textarea>
+        <textarea id="nota" rows="2" placeholder="Ej: Alérgico al maní, mesa cerca de la ventana..."></textarea>
         
         <button type="submit" class="btn-reservar">REGISTRAR RESERVACIÓN</button>
     </form>
@@ -130,7 +108,7 @@
     <div id="mensaje"></div>
 
     <div class="lista-reservas">
-        <h3 style="color: #e9c46a;">Próximas Mesas por Servir:</h3>
+        <h3 style="color: #e9c46a;">Mesas Pendientes:</h3>
         <div id="listaContainer">Cargando...</div>
     </div>
 </div>
@@ -152,9 +130,9 @@
             const div = document.createElement('div');
             div.className = 'reserva-item';
             div.innerHTML = `
-                <div style="font-size: 1.1em;"><strong>${r.fecha} a las ${r.hora}</strong></div>
+                <div><strong>${r.fecha} a las ${r.hora}</strong></div>
                 <div style="margin: 5px 0;">👤 ${r.nombre} (${r.personas} pers.)</div>
-                <div style="color: #e9c46a;">🍲 ${r.pedido}</div>
+                <div style="color: #e9c46a; font-weight: bold;">🍴 ${r.pedido}</div>
                 <div class="nota-texto">Nota: ${r.nota || 'Sin observaciones'}</div>
                 <button onclick="marcarServida(${r.id})" class="btn-servida">MARCAR COMO SERVIDA ✅</button>
             `;
@@ -163,7 +141,7 @@
     }
 
     window.marcarServida = async (id) => {
-        if(confirm('¿Confirmas que la mesa ya fue atendida?')) {
+        if(confirm('¿Mesa servida?')) {
             await fetch(`${API_URL}/${id}/completar`, { method: 'PUT' });
             cargarReservaciones();
         }
@@ -171,21 +149,28 @@
 
     document.getElementById('reservaForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Obtener todos los platos marcados
+        const marcados = Array.from(document.querySelectorAll('#listaPlatos input:checked'))
+                              .map(el => el.value);
+        const pedidoFinal = marcados.length > 0 ? marcados.join(', ') : 'No especificado';
+
         const body = {
             nombre: document.getElementById('nombre').value,
             fecha: document.getElementById('fecha').value,
             hora: document.getElementById('hora').value,
             personas: document.getElementById('personas').value,
-            pedido: document.getElementById('pedido').value,
+            pedido: pedidoFinal,
             nota: document.getElementById('nota').value
         };
+
         await fetch(API_URL, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(body)
         });
+
         document.getElementById('reservaForm').reset();
-        document.getElementById('pedido').value = "Platos a escoger cuando llegue";
         cargarReservaciones();
     });
 

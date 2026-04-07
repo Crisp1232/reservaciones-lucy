@@ -33,7 +33,6 @@ app.put('/api/reservaciones/:id/completar', (req, res) => {
     }
 });
 
-// GENERAR PDF ORDENADO POR FECHA Y HORA
 app.get('/api/exportar-pdf', (req, res) => {
     const doc = new PDFDocument({ margin: 50 });
     res.setHeader('Content-Type', 'application/pdf');
@@ -41,10 +40,10 @@ app.get('/api/exportar-pdf', (req, res) => {
     doc.pipe(res);
 
     doc.fontSize(22).text('GRILL & BAKERY LUCY', { align: 'center' });
-    doc.fontSize(16).text('Cronograma de Reservaciones', { align: 'center' });
+    doc.fontSize(16).text('Hoja de Ruta de Reservaciones', { align: 'center' });
     doc.moveDown();
     
-    // Lógica de ordenamiento: Primero por fecha, luego por hora
+    // Ordenar por fecha y luego por hora
     const reservacionesOrdenadas = [...reservaciones].sort((a, b) => {
         if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha);
         return a.hora.localeCompare(b.hora);
@@ -59,7 +58,8 @@ app.get('/api/exportar-pdf', (req, res) => {
                .fontSize(12).text(`${r.fecha} | ${r.hora} - ${r.nombre} ${status}`);
             
             doc.fillColor('black').fontSize(11)
-               .text(`   Personas: ${r.personas} | Pedido: ${r.pedido}`)
+               .text(`   Personas: ${r.personas}`)
+               .text(`   Pedido: ${r.pedido}`)
                .text(`   Notas: ${r.nota || 'Ninguna'}`)
                .moveDown(0.8);
             doc.path(`M 50 ${doc.y} L 550 ${doc.y}`).strokeOpacity(0.2).stroke().strokeOpacity(1);
