@@ -6,43 +6,37 @@
     <title>Reservaciones - Grill & Bakery Lucy</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #0d1b2a; color: #e0e1dd; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: #1b263b; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .container { max-width: 650px; margin: 0 auto; background: #1b263b; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         h1 { text-align: center; color: #e9c46a; margin-bottom: 5px; }
-        h2 { text-align: center; font-size: 1.1em; color: #a2a2a2; margin-bottom: 25px; }
-        form { display: flex; flex-direction: column; gap: 12px; }
+        form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
         label { font-weight: bold; font-size: 0.9em; color: #e9c46a; }
-        input, textarea, button { padding: 12px; border-radius: 8px; border: none; font-size: 16px; width: 100%; box-sizing: border-box; }
+        input, textarea, button, select { padding: 12px; border-radius: 8px; border: none; font-size: 16px; width: 100%; box-sizing: border-box; }
         input, textarea { background: #415a77; color: white; }
         
-        /* Contenedor de Selección Múltiple */
-        .menu-scroll { 
-            background: #415a77; 
-            border-radius: 8px; 
-            max-height: 300px; 
-            overflow-y: auto; 
-            padding: 15px;
-            border: 1px solid #e9c46a;
-        }
-        .categoria-titulo { color: #e9c46a; font-weight: bold; font-size: 0.85em; text-transform: uppercase; margin: 15px 0 5px 0; display: block; border-bottom: 1px solid #5d6d7e; }
-        .opcion-menu { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; }
-        .opcion-menu input { width: auto; cursor: pointer; }
+        .menu-scroll { background: #415a77; border-radius: 8px; max-height: 350px; overflow-y: auto; padding: 15px; border: 1px solid #e9c46a; }
+        .cat-t { color: #e9c46a; font-weight: bold; font-size: 0.8em; text-transform: uppercase; margin: 15px 0 5px 0; display: block; border-bottom: 1px solid #5d6d7e; }
+        .op-m { display: flex; align-items: center; gap: 10px; padding: 5px 0; cursor: pointer; font-size: 0.9em; }
+        .op-m input { width: auto; }
 
-        .btn-reservar { background: #e9c46a; color: #1b263b; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .tabs { display: flex; gap: 10px; margin-top: 25px; border-bottom: 2px solid #415a77; padding-bottom: 10px; }
+        .tab-btn { background: none; border: 1px solid #e9c46a; color: #e9c46a; cursor: pointer; flex: 1; padding: 10px; transition: 0.3s; }
+        .tab-btn.active { background: #e9c46a; color: #1b263b; font-weight: bold; }
+
+        .btn-res { background: #e9c46a; color: #1b263b; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-pdf { background: #e74c3c; color: white; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; }
-        .btn-servida { background: #2a9d8f; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .reserva-item { background: #415a77; padding: 20px; margin-top: 15px; border-radius: 10px; border-left: 8px solid #e9c46a; }
-        .nota-texto { color: #bdc3c7; font-size: 0.85em; margin-top: 8px; border-top: 1px solid #5d6d7e; padding-top: 5px; }
+        .btn-ser { background: #2a9d8f; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .res-item { background: #415a77; padding: 20px; margin-top: 15px; border-radius: 10px; border-left: 8px solid #e9c46a; position: relative; }
+        .badge { position: absolute; top: 10px; right: 10px; font-size: 0.7em; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>GRILL & BAKERY LUCY</h1>
-    <h2>Gestión Profesional de Reservas</h2>
     
     <form id="reservaForm">
-        <label>Nombre del Cliente:</label>
-        <input type="text" id="nombre" required placeholder="Ej: Christopher Picón">
+        <label>Cliente:</label>
+        <input type="text" id="nombre" required placeholder="Nombre completo">
         
         <div style="display: flex; gap: 10px;">
             <div style="flex: 1;"><label>Fecha:</label><input type="date" id="fecha" required></div>
@@ -52,130 +46,132 @@
         <label>Personas:</label>
         <input type="number" id="personas" required min="1">
 
-        <label>Selecciona los platos de la carta:</label>
+        <label>Selecciona los platos (Carta Completa):</label>
         <div class="menu-scroll" id="listaPlatos">
-            <label class="opcion-menu"><input type="checkbox" value="Platos a escoger cuando llegue" checked> 🍽️ Platos a escoger cuando llegue</label>
+            <label class="op-m"><input type="checkbox" value="Platos a escoger" checked> 🍽️ Escoger al llegar</label>
+            
+            <span class="cat-t">Especialidades</span>
+            <label class="op-m"><input type="checkbox" value="Chuzo Tradicional Lucy"> Chuzo Tradicional Lucy</label>
+            <label class="op-m"><input type="checkbox" value="Chuzo Mar y Tierra"> Chuzo Mar y Tierra</label>
+            <label class="op-m"><input type="checkbox" value="Chuzo de Mariscos"> Chuzo de Mariscos</label>
+            <label class="op-m"><input type="checkbox" value="Chuzo de Cuy de la Abuela"> Chuzo de Cuy de la Abuela</label>
 
-            <span class="categoria-titulo">Especialidades</span>
-            <label class="opcion-menu"><input type="checkbox" value="Chuzo Tradicional Lucy"> Chuzo Tradicional Lucy</label>
-            <label class="opcion-menu"><input type="checkbox" value="Chuzo Mar y Tierra"> Chuzo Mar y Tierra</label>
-            <label class="opcion-menu"><input type="checkbox" value="Chuzo de Mariscos"> Chuzo de Mariscos</label>
-            <label class="opcion-menu"><input type="checkbox" value="Chuzo de Cuy de la Abuela"> Chuzo de Cuy de la Abuela</label>
+            <span class="cat-t">A la Parrilla</span>
+            <label class="op-m"><input type="checkbox" value="plato de tomahawk"> plato de tomahawk</label>
+            <label class="op-m"><input type="checkbox" value="Bife de Chorizo Lucy"> Bife de Chorizo Lucy</label>
+            <label class="op-m"><input type="checkbox" value="Ribeye Steak"> Ribeye Steak</label>
+            <label class="op-m"><input type="checkbox" value="Cowboy de Cerdo"> Cowboy de Cerdo</label>
+            <label class="op-m"><input type="checkbox" value="Matambre de Cerdo"> Matambre de Cerdo</label>
+            <label class="op-m"><input type="checkbox" value="Costilla de Cerdo"> Costilla de Cerdo</label>
+            <label class="op-m"><input type="checkbox" value="Lomo a lo Pobre"> Lomo a lo Pobre</label>
+            <label class="op-m"><input type="checkbox" value="Churrasco"> Churrasco</label>
+            <label class="op-m"><input type="checkbox" value="Lomo Saltado"> Lomo Saltado</label>
+            <label class="op-m"><input type="checkbox" value="Suprema de Pollo"> Suprema de Pollo</label>
+            <label class="op-m"><input type="checkbox" value="Cuencano Tradicional Lucy"> Cuencano Tradicional (Cecina)</label>
 
-            <span class="categoria-titulo">Parrilla</span>
-            <label class="opcion-menu"><input type="checkbox" value="plato de tomahawk"> plato de tomahawk</label>
-            <label class="opcion-menu"><input type="checkbox" value="Bife de Chorizo Lucy"> Bife de Chorizo Lucy</label>
-            <label class="opcion-menu"><input type="checkbox" value="Ribeye Steak"> Ribeye Steak</label>
-            <label class="opcion-menu"><input type="checkbox" value="Cowboy de Cerdo"> Cowboy de Cerdo</label>
-            <label class="opcion-menu"><input type="checkbox" value="Matambre de Cerdo"> Matambre de Cerdo</label>
-            <label class="opcion-menu"><input type="checkbox" value="Churrasco"> Churrasco</label>
-            <label class="opcion-menu"><input type="checkbox" value="Suprema de Pollo"> Suprema de Pollo</label>
-            <label class="opcion-menu"><input type="checkbox" value="Costilla de Cerdo"> Costilla de Cerdo</label>
+            <span class="cat-t">Sopas y Caldos</span>
+            <label class="op-m"><input type="checkbox" value="Locro de Papas"> Locro de Papas</label>
+            <label class="op-m"><input type="checkbox" value="Caldo de Gallina Criolla"> Caldo de Gallina Criolla</label>
+            <label class="op-m"><input type="checkbox" value="Caldo de Patas"> Caldo Tradicional de Patas</label>
+            <label class="op-m"><input type="checkbox" value="Papi Pollo"> Papi Pollo</label>
+            <label class="op-m"><input type="checkbox" value="Salchipapa"> Salchipapa</label>
 
-            <span class="categoria-titulo">Sopas y Caldos</span>
-            <label class="opcion-menu"><input type="checkbox" value="Locro de Papas"> Locro de Papas</label>
-            <label class="opcion-menu"><input type="checkbox" value="Caldo de Gallina Criolla"> Caldo de Gallina Criolla</label>
-            <label class="opcion-menu"><input type="checkbox" value="Caldo Tradicional de Patas"> Caldo Tradicional de Patas</label>
-            <label class="opcion-menu"><input type="checkbox" value="Papi Pollo"> Papi Pollo</label>
-            <label class="opcion-menu"><input type="checkbox" value="Salchipapa"> Salchipapa</label>
+            <span class="cat-t">Ceviches y Chicharrones</span>
+            <label class="op-m"><input type="checkbox" value="Ceviche de Pescado"> Ceviche de Pescado</label>
+            <label class="op-m"><input type="checkbox" value="Ceviche de Camarón"> Ceviche de Camarón</label>
+            <label class="op-m"><input type="checkbox" value="Ceviche Marinero"> Ceviche Marinero</label>
+            <label class="op-m"><input type="checkbox" value="Jalea de Mariscos"> Jalea de Mariscos</label>
+            <label class="op-m"><input type="checkbox" value="Trilogía de Mariscos"> Trilogía de Mariscos</label>
 
-            <span class="categoria-titulo">Ceviches y Chicharrones</span>
-            <label class="opcion-menu"><input type="checkbox" value="Ceviche de Pescado"> Ceviche de Pescado</label>
-            <label class="opcion-menu"><input type="checkbox" value="Ceviche de Camarón"> Ceviche de Camarón</label>
-            <label class="opcion-menu"><input type="checkbox" value="Jalea de Mariscos"> Jalea de Mariscos</label>
+            <span class="cat-t">Tex Mex e Hamburguesas</span>
+            <label class="op-m"><input type="checkbox" value="Tacos Lucy"> Tacos Lucy</label>
+            <label class="op-m"><input type="checkbox" value="Burrito Lucy"> Burrito Lucy</label>
+            <label class="op-m"><input type="checkbox" value="Quesadilla Lucy"> Quesadilla Lucy</label>
+            <label class="op-m"><input type="checkbox" value="Nachos con Chilli"> Nachos con Chilli</label>
+            <label class="op-m"><input type="checkbox" value="Hamburguesa Lucy"> Hamburguesa Lucy</label>
+            <label class="op-m"><input type="checkbox" value="Hamburguesa BBQ Texas"> Hamburguesa BBQ Texas</label>
+            <label class="op-m"><input type="checkbox" value="Alitas de Pollo"> Alitas de Pollo</label>
 
-            <span class="categoria-titulo">Tex Mex e Hamburguesas</span>
-            <label class="opcion-menu"><input type="checkbox" value="Tacos Lucy"> Tacos Lucy</label>
-            <label class="opcion-menu"><input type="checkbox" value="Burrito Lucy"> Burrito Lucy</label>
-            <label class="opcion-menu"><input type="checkbox" value="Hamburguesa Lucy"> Hamburguesa Lucy</label>
-            <label class="opcion-menu"><input type="checkbox" value="Hamburguesa BBQ Texas"> Hamburguesa BBQ Texas</label>
-            <label class="opcion-menu"><input type="checkbox" value="Alitas de Pollo"> Alitas de Pollo</label>
-
-            <span class="categoria-titulo">Bebidas y Postres</span>
-            <label class="opcion-menu"><input type="checkbox" value="Cerveza Artesanal"> Cerveza Artesanal</label>
-            <label class="opcion-menu"><input type="checkbox" value="Sangría Jarra"> Sangría Jarra</label>
-            <label class="opcion-menu"><input type="checkbox" value="Torta Mojada de Chocolate"> Torta Mojada de Chocolate</label>
-            <label class="opcion-menu"><input type="checkbox" value="Banana Split Lucy"> Banana Split Lucy</label>
+            <span class="cat-t">Postres y Bebidas</span>
+            <label class="op-m"><input type="checkbox" value="Torta Mojada de Chocolate"> Torta Mojada de Chocolate</label>
+            <label class="op-m"><input type="checkbox" value="Torta Tres Leches"> Torta Tres Leches</label>
+            <label class="op-m"><input type="checkbox" value="Banana Split Lucy"> Banana Split Lucy</label>
+            <label class="op-m"><input type="checkbox" value="Cerveza Artesanal"> Cerveza Artesanal</label>
+            <label class="op-m"><input type="checkbox" value="Canelazo Tradicional"> Canelazo Tradicional</label>
+            <label class="op-m"><input type="checkbox" value="Sangría Jarra"> Sangría Jarra</label>
         </div>
 
-        <label>Notas Especiales:</label>
-        <textarea id="nota" rows="2" placeholder="Ej: Alérgico al maní, mesa cerca de la ventana..."></textarea>
-        
-        <button type="submit" class="btn-reservar">REGISTRAR RESERVACIÓN</button>
+        <textarea id="nota" rows="2" placeholder="Observaciones extras..."></textarea>
+        <button type="submit" class="btn-res">REGISTRAR</button>
     </form>
 
-    <button id="btnExportar" class="btn-pdf">📥 DESCARGAR HOJA DE RUTA (PDF)</button>
-    <div id="mensaje"></div>
+    <button id="btnExportar" class="btn-pdf">📥 DESCARGAR HOJA DE RUTA (Pendientes)</button>
 
-    <div class="lista-reservas">
-        <h3 style="color: #e9c46a;">Mesas Pendientes:</h3>
-        <div id="listaContainer">Cargando...</div>
+    <div class="tabs">
+        <button class="tab-btn active" id="tabPendientes" onclick="cambiarVista('pendientes')">Pendientes</button>
+        <button class="tab-btn" id="tabTodas" onclick="cambiarVista('todas')">Historial Completo</button>
     </div>
+
+    <div id="listaContainer"></div>
 </div>
 
 <script>
-    const API_URL = '/api/reservaciones';
-    const PDF_URL = '/api/exportar-pdf';
+    let vistaActual = 'pendientes';
 
-    async function cargarReservaciones() {
-        const res = await fetch(API_URL);
+    async function cargar() {
+        const res = await fetch('/api/reservaciones');
         const data = await res.json();
-        const pendientes = data.filter(r => r.estado !== 'completada')
-                               .sort((a,b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
-        
+        const ordenadas = data.sort((a,b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
+        const filtradas = vistaActual === 'pendientes' ? ordenadas.filter(r => r.estado !== 'completada') : ordenadas;
+
         const cont = document.getElementById('listaContainer');
-        cont.innerHTML = pendientes.length ? '' : 'No hay mesas pendientes.';
+        cont.innerHTML = filtradas.length ? '' : `<p style="text-align:center; margin-top:20px;">Sin registros.</p>`;
         
-        pendientes.forEach(r => {
+        filtradas.forEach(r => {
             const div = document.createElement('div');
-            div.className = 'reserva-item';
+            div.className = 'res-item';
+            const bCls = r.estado === 'completada' ? 'background:#2a9d8f' : 'background:#f39c12';
             div.innerHTML = `
-                <div><strong>${r.fecha} a las ${r.hora}</strong></div>
-                <div style="margin: 5px 0;">👤 ${r.nombre} (${r.personas} pers.)</div>
-                <div style="color: #e9c46a; font-weight: bold;">🍴 ${r.pedido}</div>
-                <div class="nota-texto">Nota: ${r.nota || 'Sin observaciones'}</div>
-                <button onclick="marcarServida(${r.id})" class="btn-servida">MARCAR COMO SERVIDA ✅</button>
+                <span class="badge" style="${bCls}">${r.estado === 'completada' ? 'SERVIDA' : 'ESPERANDO'}</span>
+                <strong>${r.fecha} - ${r.hora}</strong><br>
+                👤 ${r.nombre} (${r.personas} pers.)<br>
+                <div style="color:#e9c46a; margin-top:5px; font-weight:bold;">🍴 ${r.pedido}</div>
+                ${r.estado === 'pendiente' ? `<button onclick="servir(${r.id})" class="btn-ser">✅ Marcar Servida</button>` : ''}
             `;
             cont.appendChild(div);
         });
     }
 
-    window.marcarServida = async (id) => {
-        if(confirm('¿Mesa servida?')) {
-            await fetch(`${API_URL}/${id}/completar`, { method: 'PUT' });
-            cargarReservaciones();
-        }
+    function cambiarVista(v) {
+        vistaActual = v;
+        document.getElementById('tabPendientes').classList.toggle('active', v === 'pendientes');
+        document.getElementById('tabTodas').classList.toggle('active', v === 'todas');
+        cargar();
+    }
+
+    window.servir = async (id) => {
+        await fetch(`/api/reservaciones/${id}/completar`, { method: 'PUT' });
+        cargar();
     };
 
     document.getElementById('reservaForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Obtener todos los platos marcados
-        const marcados = Array.from(document.querySelectorAll('#listaPlatos input:checked'))
-                              .map(el => el.value);
-        const pedidoFinal = marcados.length > 0 ? marcados.join(', ') : 'No especificado';
-
-        const body = {
+        const m = Array.from(document.querySelectorAll('#listaPlatos input:checked')).map(i => i.value);
+        const b = {
             nombre: document.getElementById('nombre').value,
             fecha: document.getElementById('fecha').value,
             hora: document.getElementById('hora').value,
             personas: document.getElementById('personas').value,
-            pedido: pedidoFinal,
+            pedido: m.join(', '),
             nota: document.getElementById('nota').value
         };
-
-        await fetch(API_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
-        });
-
+        await fetch('/api/reservaciones', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(b) });
         document.getElementById('reservaForm').reset();
-        cargarReservaciones();
+        cargar();
     });
 
-    document.getElementById('btnExportar').addEventListener('click', () => window.open(PDF_URL, '_blank'));
-    cargarReservaciones();
+    document.getElementById('btnExportar').addEventListener('click', () => window.open('/api/exportar-pdf', '_blank'));
+    cargar();
 </script>
 </body>
 </html>

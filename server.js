@@ -15,7 +15,7 @@ let reservaciones = [];
 app.post('/api/reservaciones', (req, res) => {
     const nueva = { ...req.body, id: Date.now(), estado: 'pendiente' };
     reservaciones.push(nueva);
-    res.status(201).json({ mensaje: 'Reservación guardada con éxito', reservacion: nueva });
+    res.status(201).json({ mensaje: 'Reservación guardada', reservacion: nueva });
 });
 
 app.get('/api/reservaciones', (req, res) => {
@@ -36,37 +36,37 @@ app.put('/api/reservaciones/:id/completar', (req, res) => {
 app.get('/api/exportar-pdf', (req, res) => {
     const doc = new PDFDocument({ margin: 50 });
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=Reporte_Reservas_Lucy.pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=Pendientes_Lucy.pdf');
     doc.pipe(res);
 
     doc.fontSize(22).text('GRILL & BAKERY LUCY', { align: 'center' });
-    doc.fontSize(16).text('Hoja de Ruta de Reservaciones', { align: 'center' });
+    doc.fontSize(14).text('HOJA DE TRABAJO: MESAS PENDIENTES', { align: 'center' });
     doc.moveDown();
     
-    // Ordenar por fecha y luego por hora
-    const reservacionesOrdenadas = [...reservaciones].sort((a, b) => {
-        if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha);
-        return a.hora.localeCompare(b.hora);
-    });
+    // Filtro estricto: Solo pendientes y ordenado por Fecha -> Hora
+    const pendientes = reservaciones.filter(r => r.estado === 'pendiente')
+        .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
 
-    if (reservacionesOrdenadas.length === 0) {
-        doc.text('No hay reservaciones.');
+    if (pendientes.length === 0) {
+        doc.text('No hay reservaciones pendientes.');
     } else {
-        reservacionesOrdenadas.forEach((r, i) => {
-            const status = r.estado === 'completada' ? '[SERVIDA]' : '[PENDIENTE]';
-            doc.fillColor(r.estado === 'completada' ? 'green' : 'red')
-               .fontSize(12).text(`${r.fecha} | ${r.hora} - ${r.nombre} ${status}`);
-            
-            doc.fillColor('black').fontSize(11)
-               .text(`   Personas: ${r.personas}`)
-               .text(`   Pedido: ${r.pedido}`)
-               .text(`   Notas: ${r.nota || 'Ninguna'}`)
+        let fechaActual = "";
+        pendientes.forEach((r) => {
+            if (r.fecha !== fechaActual) {
+                fechaActual = r.fecha;
+                doc.moveDown();
+                doc.fillColor('black').fontSize(14).text(`DÍA: ${fechaActual}`, { underline: true });
+                doc.moveDown(0.5);
+            }
+            doc.fillColor('#333').fontSize(11)
+               .text(`Hora: ${r.hora} | Cliente: ${r.nombre} | Pers: ${r.personas}`)
+               .fillColor('blue').text(`Pedido: ${r.pedido}`)
+               .fillColor('black').text(`Notas: ${r.nota || 'Sin notas'}`)
                .moveDown(0.8);
-            doc.path(`M 50 ${doc.y} L 550 ${doc.y}`).strokeOpacity(0.2).stroke().strokeOpacity(1);
-            doc.moveDown(0.5);
+            doc.path(`M 50 ${doc.y} L 550 ${doc.y}`).strokeOpacity(0.1).stroke().strokeOpacity(1);
         });
     }
     doc.end();
 });
 
-app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
