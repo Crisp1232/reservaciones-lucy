@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reservaciones</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        form { display: flex; flex-direction: column; gap: 10px; }
+        input, textarea, button { padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit; }
+        
+        .btn-reservar { background-color: #007bff; color: white; border: none; cursor: pointer; margin-top: 10px; }
+        .btn-reservar:hover { background-color: #0056b3; }
+        
+        /* Estilo actualizado para el botón de PDF (Color Rojo) */
+        .btn-pdf { background-color: #e74c3c; color: white; border: none; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        .btn-pdf:hover { background-color: #c0392b; }
+
+        #mensaje { margin-top: 15px; text-align: center; font-weight: bold; color: green; }
+        .lista-reservas { margin-top: 30px; }
+        .reserva-item { background: #e9ecef; padding: 10px; margin-bottom: 10px; border-radius: 5px; border-left: 5px solid #007bff; }
+        .nota-texto { font-style: italic; color: #555; margin-top: 5px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Haz tu Reservación</h1>
+    
+    <form id="reservaForm">
+        <label for="nombre">Nombre completo:</label>
+        <input type="text" id="nombre" required placeholder="Ej. Juan Pérez">
+        
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" required>
+        
+        <label for="hora">Hora:</label>
+        <input type="time" id="hora" required>
+
+        <label for="personas">Número de personas:</label>
+        <input type="number" id="personas" required min="1" placeholder="Ej. 2">
+
+        <label for="nota">Nota o Pedido (Opcional):</label>
+        <textarea id="nota" rows="2" placeholder="Ej. Celebración de cumpleaños, alérgico al maní..."></textarea>
+        
+        <button type="submit" class="btn-reservar">Reservar ahora</button>
+    </form>
+
+    <button id="btnExportar" class="btn-pdf">📥 Descargar Reporte PDF</button>
+
+    <div id="mensaje"></div>
+
+    <div class="lista-reservas">
+        <h3>Reservaciones Actuales:</h3>
+        <div id="listaContainer">Aún no hay reservaciones.</div>
+    </div>
+</div>
+
+<script>
+    // Borra las URLs de localhost y déjalas así:
+    const API_URL = '/api/reservaciones';
+    const PDF_URL = '/api/exportar-pdf';
+    async function cargarReservaciones() {
+        const respuesta = await fetch(API_URL);
+        const reservaciones = await respuesta.json();
+        
+        const contenedor = document.getElementById('listaContainer');
+        if (reservaciones.length === 0) {
+            contenedor.innerHTML = 'Aún no hay reservaciones.';
+            return;
+        }
+
+        contenedor.innerHTML = '';
+        reservaciones.forEach(res => {
+            const div = document.createElement('div');
+            div.className = 'reserva-item';
+            div.innerHTML = `
+                <strong>${res.nombre}</strong> - ${res.fecha} a las ${res.hora} <br>
+                👤 Personas: ${res.personas} <br>
+                <div class="nota-texto">📝 Nota/Pedido: ${res.nota || 'Ninguna'}</div>
+            `;
+            contenedor.appendChild(div);
+        });
+    }
+
+    document.getElementById('reservaForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const nombre = document.getElementById('nombre').value;
+        const fecha = document.getElementById('fecha').value;
+        const hora = document.getElementById('hora').value;
+        const personas = document.getElementById('personas').value;
+        const nota = document.getElementById('nota').value;
+
+        const respuesta = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, fecha, hora, personas, nota })
+        });
+
+        const resultado = await respuesta.json();
+        
+        document.getElementById('mensaje').innerText = resultado.mensaje;
+        document.getElementById('reservaForm').reset();
+        cargarReservaciones();
+        
+        setTimeout(() => { document.getElementById('mensaje').innerText = ''; }, 3000);
+    });
+
+    // Función actualizada para abrir el PDF
+    document.getElementById('btnExportar').addEventListener('click', () => {
+        window.open(PDF_URL, '_blank');
+    });
+
+    cargarReservaciones();
+</script>
+
+</body>
+</html>
