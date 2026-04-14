@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // 1. CONEXIÓN A LA BASE DE DATOS ETERNA
-const uri = "mongodb+srv://chris:<db_password>@cluster0.qn9ys6b.mongodb.net/?appName=Cluster0"; // Pega tu enlace de MongoDB aquí (con tu contraseña real)
+const uri = "mongodb+srv://chris:Lucy2026@cluster0.qn9ys6b.mongodb.net/?appName=Cluster0";// Pega tu enlace de MongoDB aquí (con tu contraseña real)
 mongoose.connect(uri)
     .then(() => console.log('¡Conectado al Cerebro Eterno (MongoDB)!'))
     .catch(err => console.log('Error de conexión:', err));
